@@ -2,14 +2,16 @@
 
 
 
-
+//declare database
 $mysqli = new mysqli('localhost', 'root', '', 'crud') or die(mysqli_error($mysqli));  
+ 
 $id = 0;  
 $update = false;
 $name = '';
 $position = '';
 $sg = '';
 $step = '';
+$username = '';
 //save
 if(isset($_POST['save'])){
     $name = $_POST['name'];
@@ -66,4 +68,9 @@ if (isset($_POST['update'])){
 
    header("location:employees.php");
 }
+
+
+//show user name
+    
+
 ?>

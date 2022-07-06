@@ -10,6 +10,7 @@
     --text-color: rgb(112, 112, 112);
     --text-green: rgb(146, 234, 171);
     --text-yellow: rgb(175, 177, 186);
+    --o3: rgb(129, 120, 111);
 }
 
 *{
@@ -242,6 +243,4 @@ main{
     place-items: center;
     margin-right: .8rem;
 }
-
-
 

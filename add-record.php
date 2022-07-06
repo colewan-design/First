@@ -171,8 +171,10 @@
                 if ($update == true ): 
                  ?>
                     <button type="submit" class="btn btn-info" name="update">Update</button>
+                    <a href="employees.php" id="cancel" name="cancel" class="btn btn-danger">Cancel</a>
                <?php else: ?>
-                <button type="submit" class="btn btn-primary" name="save">Save</button>
+                <button type="submit" class="btn btn-success" name="save" style="margin-top:10px;">Save</button>
+                <a href="employees.php" id="cancel" name="cancel" class="btn btn-danger" style="margin-top:10px;">Cancel</a>
                 <?php endif; ?>
             </form>
             </div>

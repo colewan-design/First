@@ -20,6 +20,7 @@
      });
   </script>
 <body >
+
     <input type="checkbox" name="" id="menu-toggle">
     <div class="sidebar">
         <div class="sidebar-container">
@@ -169,9 +170,12 @@
                 <?php
                 if ($update == true ): 
                  ?>
-                    <button type="submit" class="btn btn-info" name="update">Update</button>
+                    <button type="submit" class="btn btn-info" name="update" style="margin-top:10px;">Update</button>
+                    <a href="employees.php" id="cancel" name="cancel" class="btn btn-danger" style="margin-top:10px;">Cancel</a>
                <?php else: ?>
-                <button type="submit" class="btn btn-primary" name="save">Save</button>
+                <button type="submit" class="btn btn-success" name="save">Save</button>
+                <a href="/link-to/whatever-address/" id="cancel" name="cancel" class="btn btn-danger" style="margin-top:10px;">Cancel</a>
+</div>y
                 <?php endif; ?>
             </form>
             </div>

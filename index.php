@@ -1,12 +1,36 @@
 <?php
-// Initialize the session
+
 session_start();
- 
+// Initialize the session
+isset($_SESSION) || session_start();
+
 // Check if the user is logged in, if not then redirect him to login page
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: login.php");
     exit;
 }
+require_once 'config.php';
+// Define variables and initialize with empty values
+// SQL query
+$strSQL = "SELECT fullname from users WHERE id = '".$_SESSION['id']."'";
+
+// Execute the query (the recordset $rs contains the result)
+$rs = mysqli_query($link, $strSQL);
+
+// Loop the recordset $rs
+// Each row will be made into an array ($row) using mysqli_fetch_array
+while($row = mysqli_fetch_array($rs)) {
+
+  // Write the value of the column FirstName (which is now in the array $row)
+ $first= $row["fullname"];
+
+
+}
+
+
+
+
+
 
 
 ?>
@@ -17,7 +41,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CBO Payroll Management System</title>
-    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+ 
     <link rel="stylesheet" href="style.css">
     <script src="js/jquery.min.js"></script>
      <script src="js/bootstrap.min.js"></script>
@@ -38,6 +62,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
      });
   </script>
 <body >
+<link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
     <input type="checkbox" name="" id="menu-toggle">
     <div class="sidebar">
         <div class="sidebar-container">
@@ -55,8 +80,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                     <div class="avartar-text">
 
-                        <h4>
-                            Raja Sulayman
+                        <h4 style="padding-left:3px;">
+                        <?php echo $first; ?> 
                         </h4>
                         <small>
                             639-27402-9600
@@ -118,37 +143,30 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     <div class="main-content">
         <header >
             <div class="header-title-wrapper">
-                <label for="">
-                    <span class="las la-bars">
-
-                    </span>
-                </label>
+               
                 <div class="header-title">
-                    <h1>Employees</h1>
-                    <p>Display Employee analytics <span class="las la-chart-line">
+                    <h1>Hi <?php echo htmlspecialchars($_SESSION["username"]); ?>!</h1>
+                    <p>Display Admin Dashboard <span class="las la-chart-line">
 
                     </span> </p>
                 </div>
             </div>
-            <div class="header-action">
-                <button class="btn bt-main">
-                    <span class="las la-plus-square"> Sort </span>
-        
-                </button>
-            </div>
+           
             <div class="header-action" style="position:absolute;right:1rem; top:1rem;">
             <div class="dropdown">
            
-  <button class="btn btn-light dropdown-toggle link-color" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-    Hi Raja!
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-  <li><a class="las la-user dropdown-item " href="logout.php">Firepaw</a></li> <!--<?php echo $username;?> -->
-  <li><a class="dropdown-item link-color" href="logout.php">Account settings </a></li>
-    <li><a class="dropdown-item link-color" href="logout.php">Sign out</a></li>
+                <button name="papa" class="btn btn-light dropdown-toggle link-color" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                  <?php echo $first; ?>
+                </button>
+  
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><a class="las la-user dropdown-item link-color" href="profile.php">My Profile</a></li>
+                    <li><a class="las la-cog dropdown-item link-color" href="profile.php">Account settings </a></li>
+                    <li><a class="las la-sign-out-alt dropdown-item link-color" href="logout.php">Log out</a></li>
    
-  </ul>
-</div>
+                    </ul>
+ 
+            </div>
                 
             </div>
         </header>
@@ -216,6 +234,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       }
                  
     </style>
+   
   
 </body>
 </html>

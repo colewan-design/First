@@ -1,10 +1,11 @@
 <?php
+
 // Include config file
 require_once "config.php";
  
 // Define variables and initialize with empty values
-$username = $password = $confirm_password = "";
-$username_err = $password_err = $confirm_password_err = "";
+$username = $fullname = $password = $confirm_password = "";
+$username_err = $fullname_err = $password_err = $confirm_password_err = "";
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -43,7 +44,38 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             mysqli_stmt_close($stmt);
         }
     }
-    
+    // Validate full name
+    if(empty(trim($_POST["fullname"]))){
+        $fullname_err = "Please enter a complete name.";
+    } else{
+        // Prepare a select statement
+        $sql2 = "SELECT id FROM users WHERE fullname = ?";
+        
+        if($stmt = mysqli_prepare($link, $sql2)){
+            // Bind variables to the prepared statement as parameters
+            mysqli_stmt_bind_param($stmt, "s", $param_fullname);
+            
+            // Set parameters
+            $param_fullname = trim($_POST["fullname"]);
+            
+            // Attempt to execute the prepared statement
+            if(mysqli_stmt_execute($stmt)){
+                /* store result */
+                mysqli_stmt_store_result($stmt);
+                
+                if(mysqli_stmt_num_rows($stmt) == 1){
+                    $fullname_err = "This name is already taken.";
+                } else{
+                    $fullname = trim($_POST["fullname"]);
+                }
+            } else{
+                echo "Oops! Something went wrong. Please try again later.";
+            }
+
+            // Close statement
+            mysqli_stmt_close($stmt);
+        }
+    }
     // Validate password
     if(empty(trim($_POST["password"]))){
         $password_err = "Please enter a password.";     
@@ -64,23 +96,35 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
     
     // Check input errors before inserting in database
-    if(empty($username_err) && empty($password_err) && empty($confirm_password_err)){
+    if(empty($username_err) && empty($fullname_err) && empty($password_err) && empty($confirm_password_err)){
         
         // Prepare an insert statement
-        $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        if(isset($_POST['submit'])){
+            $fullname = $_POST['fullname'];
+           
+            $mysqli->query("INSERT INTO users (fullname) VALUES ('$fullname')") or
+                    die($mysqli->error);
+                    header("location:index.php");
+                    
+        
+            
+        }
+        $sql = "INSERT INTO users (username, fullname, password) VALUES (?, ?, ?)";
          
         if($stmt = mysqli_prepare($link, $sql)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "ss", $param_username, $param_password);
+            mysqli_stmt_bind_param($stmt, "sss", $param_username, $param_fullname, $param_password);
             
             // Set parameters
             $param_username = $username;
+            $param_fullname= $fullname;
             $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
             
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
                 // Redirect to login page
                 header("location: login.php");
+                header("location: index.php");
             } else{
                 echo "Oops! Something went wrong. Please try again later.";
             }
@@ -117,6 +161,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 <span class="invalid-feedback"><?php echo $username_err; ?></span>
             </div>    
             <div class="form-group">
+                <label>Complete Name</label>
+                <input type="text" name="fullname" class="form-control <?php echo (!empty($fullname_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $fullname; ?>">
+                <span class="invalid-feedback"><?php echo $fullname_err; ?></span>
+            </div>  
+            <div class="form-group">
                 <label>Password</label>
                 <input type="password" name="password" class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $password; ?>">
                 <span class="invalid-feedback"><?php echo $password_err; ?></span>
@@ -128,10 +177,26 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             </div>
             <div class="form-group">
                 <input type="submit" class="btn btn-primary" value="Submit">
-                <input type="reset" class="btn btn-secondary ml-2" value="Reset">
+                <input class="btn btn-secondary" name="reset" type="reset" onclick="resetForm('myFormId'); return false;" />
             </div>
             <p>Already have an account? <a href="login.php">Login here</a>.</p>
         </form>
     </div>    
+    <script>
+        function resetForm(myFormId)
+   {
+       var myForm = document.getElementById(myFormId);
+
+       for (var i = 0; i < myForm.elements.length; i++)
+       {
+           if ('submit' != myForm.elements[i].type && 'reset' != myForm.elements[i].type)
+           {
+               myForm.elements[i].checked = false;
+               myForm.elements[i].value = '';
+               myForm.elements[i].selectedIndex = 0;
+           }
+       }
+   }
+    </script>
 </body>
 </html>
